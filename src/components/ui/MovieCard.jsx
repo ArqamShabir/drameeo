@@ -7,24 +7,27 @@ import useStore        from '@/store/useStore'
 import { posterUrl, fallbackPoster } from '@/utils/tmdb'
 
 /**
- * MovieCard — two variants:
- *   wide=false  → poster card (2:3) used in "You Might Like"
- *   wide=true   → landscape card (16:9) used in "Continue Watching"
+ * MovieCard — three variants:
+ *   wide=false, stretch=false → fixed poster card (horizontal scroll rows)
+ *   wide=true               → fixed landscape card (Continue Watching)
+ *   stretch=true            → fills grid cell (Explore / Favourites grid)
  */
-export default function MovieCard({ movie, wide = false, progress = null }) {
-  const navigate      = useNavigate()
+export default function MovieCard({ movie, wide = false, progress = null, stretch = false }) {
+  const navigate        = useNavigate()
   const [imgErr, setImgErr] = useState(false)
-  const addFavourite  = useStore((s) => s.addFavourite)
+  const addFavourite    = useStore((s) => s.addFavourite)
   const removeFavourite = useStore((s) => s.removeFavourite)
-  const isFav         = useStore((s) => s.isFavourite(movie?.id))
-  const addToHistory  = useStore((s) => s.addToHistory)
+  const isFav           = useStore((s) => s.isFavourite(movie?.id))
+  const addToHistory    = useStore((s) => s.addToHistory)
 
   if (!movie) return null
 
   const imgSrc = imgErr
     ? fallbackPoster
     : wide
-    ? (movie.backdrop_path ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : fallbackPoster)
+    ? (movie.backdrop_path
+        ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
+        : fallbackPoster)
     : posterUrl(movie.poster_path, 'w342')
 
   const handleClick = () => {
@@ -40,15 +43,19 @@ export default function MovieCard({ movie, wide = false, progress = null }) {
   return (
     <motion.div
       className={clsx(
-        'relative flex-shrink-0 cursor-pointer rounded-xl overflow-hidden group',
-        wide ? 'w-64 h-36' : 'w-40 h-56',
+        'relative cursor-pointer rounded-xl overflow-hidden group',
+        // stretch = fills grid cell, no fixed size
+        stretch && 'w-full h-full',
+        // fixed sizes for scroll rows
+        !stretch && !wide && 'flex-shrink-0 w-36 h-52 sm:w-40 sm:h-56',
+        !stretch &&  wide && 'flex-shrink-0 w-56 h-32 sm:w-64 sm:h-36',
       )}
       onClick={handleClick}
       whileHover={{ scale: 1.04, y: -4 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
     >
-      {/* Poster / Backdrop image */}
+      {/* Image */}
       <img
         src={imgSrc}
         alt={movie.title}
@@ -58,15 +65,18 @@ export default function MovieCard({ movie, wide = false, progress = null }) {
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-      {/* Favourite button */}
+      {/* Favourite — always visible on touch devices, hover on desktop */}
       <button
         onClick={toggleFav}
+        aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'}
         className={clsx(
           'absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200',
-          'opacity-0 group-hover:opacity-100',
-          isFav ? 'text-red-500 bg-red-500/20' : 'text-white/70 bg-black/30 hover:text-red-400'
+          // Always show on touch (no hover), fade in on desktop hover
+          isFav
+            ? 'text-red-500 bg-red-500/20 opacity-100'
+            : 'text-white/70 bg-black/30 md:opacity-0 md:group-hover:opacity-100 opacity-100'
         )}
       >
         <Heart size={13} fill={isFav ? 'currentColor' : 'none'} />
@@ -74,7 +84,6 @@ export default function MovieCard({ movie, wide = false, progress = null }) {
 
       {/* Bottom info */}
       <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2.5">
-        {/* Rating badge */}
         {movie.vote_average > 0 && (
           <div className="flex items-center gap-1 mb-1">
             <Star size={10} className="text-yellow-400 fill-yellow-400" />
@@ -94,7 +103,6 @@ export default function MovieCard({ movie, wide = false, progress = null }) {
           </p>
         )}
 
-        {/* Progress bar for Continue Watching */}
         {progress !== null && (
           <div className="mt-2 h-0.5 bg-white/20 rounded-full overflow-hidden">
             <div

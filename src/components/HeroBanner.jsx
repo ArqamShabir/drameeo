@@ -49,8 +49,11 @@ export default function HeroBanner({ movies = [], isLoading = false }) {
   }
 
   return (
-    <div className="relative w-full h-80 md:h-96 rounded-xl2 overflow-hidden mx-6 mb-6 mt-4"
-         style={{ width: 'calc(100% - 3rem)' }}>
+    <div
+      className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden
+                 mx-3 sm:mx-6 mb-4 sm:mb-6 mt-3 sm:mt-4"
+      style={{ width: 'calc(100% - 1.5rem)' }}
+    >
 
       {/* Backdrop image */}
       <AnimatePresence mode="wait">
@@ -75,7 +78,7 @@ export default function HeroBanner({ movies = [], isLoading = false }) {
       <AnimatePresence mode="wait">
         <motion.div
           key={movie.id + '_content'}
-          className="absolute inset-0 flex flex-col justify-center px-8 max-w-xl"
+          className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 max-w-xl"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0 }}
@@ -99,12 +102,12 @@ export default function HeroBanner({ movies = [], isLoading = false }) {
           )}
 
           {/* Title */}
-          <h1 className="text-white font-bold text-2xl md:text-3xl leading-tight mb-2 line-clamp-2">
+          <h1 className="text-white font-bold text-lg sm:text-2xl md:text-3xl leading-tight mb-2 line-clamp-2">
             {movie.title}
           </h1>
 
-          {/* Overview */}
-          <p className="text-white/60 text-sm leading-relaxed mb-5 line-clamp-2 max-w-sm">
+          {/* Overview — hidden on very small screens */}
+          <p className="hidden sm:block text-white/60 text-sm leading-relaxed mb-5 line-clamp-2 max-w-sm">
             {movie.overview}
           </p>
 

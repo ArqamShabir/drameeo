@@ -5,16 +5,6 @@ import MovieCard    from './MovieCard'
 import { RowSkeleton } from './Skeleton'
 import useStore from '@/store/useStore'
 
-/**
- * Horizontally scrollable row of movie cards.
- * Props:
- *   title      — section heading
- *   movies     — array of TMDB movie objects
- *   isLoading  — show skeleton while fetching
- *   wide       — use landscape (16:9) cards
- *   showProgress — show progress bar (continue watching)
- *   onSeeAll   — optional callback for "See All" button
- */
 export default function MovieRow({
   title,
   movies = [],
@@ -23,14 +13,14 @@ export default function MovieRow({
   showProgress = false,
   onSeeAll,
 }) {
-  const rowRef            = useRef(null)
-  const continueWatching  = useStore((s) => s.continueWatching)
+  const rowRef           = useRef(null)
+  const continueWatching = useStore((s) => s.continueWatching)
 
   return (
     <section className="mb-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 px-6">
-        <h2 className="text-white font-semibold text-base tracking-tight">
+      <div className="flex items-center justify-between mb-4 px-4 sm:px-6">
+        <h2 className="text-white font-semibold text-sm sm:text-base tracking-tight">
           {title}
         </h2>
         {onSeeAll && (
@@ -43,16 +33,16 @@ export default function MovieRow({
         )}
       </div>
 
-      {/* Cards row */}
+      {/* Cards row — touch-scroll friendly */}
       <div
         ref={rowRef}
-        className="scroll-row px-6"
-        style={{ scrollbarWidth: 'none' }}
+        className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 px-4 sm:px-6 scroll-smooth"
+        style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         {isLoading ? (
           <RowSkeleton count={wide ? 4 : 5} wide={wide} />
         ) : movies.length === 0 ? (
-          <p className="text-text-muted text-sm px-1">Nothing here yet.</p>
+          <p className="text-text-muted text-sm px-1 py-4">Nothing here yet.</p>
         ) : (
           movies.map((movie, i) => {
             const cwEntry = continueWatching.find((m) => m.id === movie.id)
@@ -62,6 +52,7 @@ export default function MovieRow({
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.3 }}
+                className="flex-shrink-0"
               >
                 <MovieCard
                   movie={movie}

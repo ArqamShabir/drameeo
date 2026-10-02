@@ -1,18 +1,14 @@
-// api/movie.js — GET /api/movie?id=12345
-import { tmdbFetch, json, error } from './_tmdb.js'
+import { tmdbFetch, json, error, applyRateLimit } from './_tmdb.js'
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
+  if (await applyRateLimit(req, res)) return
 
   const id = req.query.id
-  if (!id) return error(res, 'Movie ID required', 400)
+  if (!id || isNaN(Number(id))) return error(res, 'Valid movie ID required', 400)
 
   try {
-    const data = await tmdbFetch(
-      `/movie/${id}`,
-      { append_to_response: 'credits,keywords' },
-      3600  // 1h TTL
-    )
+    const data = await tmdbFetch(`/movie/${id}`, { append_to_response: 'credits,keywords' }, 3600)
     json(res, data)
   } catch (err) {
     console.error('[/api/movie]', err.message)

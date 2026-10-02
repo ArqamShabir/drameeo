@@ -17,7 +17,7 @@ export default function Favourites() {
         </div>
       ) : (
         <motion.div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4"
           initial="hidden"
           animate="show"
           variants={{
@@ -28,12 +28,13 @@ export default function Favourites() {
           {favourites.map((movie) => (
             <motion.div
               key={movie.id}
+              className="aspect-[2/3]"
               variants={{
                 hidden: { opacity: 0, scale: 0.92 },
                 show:   { opacity: 1, scale: 1     },
               }}
             >
-              <MovieCard movie={movie} />
+              <MovieCard movie={movie} stretch />
             </motion.div>
           ))}
         </motion.div>

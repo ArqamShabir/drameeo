@@ -74,7 +74,8 @@ const useStore = create(
       setGenrePrefs: (genreIds) => set({ genrePrefs: genreIds }),
 
       // ── UI State ─────────────────────────────────────────
-      sidebarOpen: true,
+      // Default false — desktop sidebar is CSS-controlled; mobile starts closed
+      sidebarOpen: false,
 
       toggleSidebar: () =>
         set((s) => ({ sidebarOpen: !s.sidebarOpen })),
