@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg-primary text-white m-0 p-0 overflow-hidden;
+  }
+
+  ::-webkit-scrollbar        { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { @apply bg-accent rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-accent-light; }
+
+  * { scrollbar-width: thin; scrollbar-color: #7c3aed transparent; }
+}
+
+/* ── Components ───────────────────────────────── */
+@layer components {
+  /* Skeleton shimmer */
+  .skeleton {
+    @apply rounded-xl bg-bg-card relative overflow-hidden;
+    background: linear-gradient(
+      90deg,
+      #1a1a2e 25%,
+      #22223a 50%,
+      #1a1a2e 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Glass card */
+  .glass-card {
+    @apply bg-bg-card border border-border-card rounded-xl2 backdrop-blur-sm;
+  }
+
+  /* Scrollable row (hide scrollbar but allow scroll) */
+  .scroll-row {
+    @apply flex gap-4 overflow-x-auto pb-2;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-row::-webkit-scrollbar { display: none; }
+
+  /* Nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary
+           text-sm font-medium cursor-pointer transition-all duration-200
+           hover:text-white hover:bg-white/5;
+  }
+  .nav-item.active {
+    @apply text-white bg-accent-dim;
+    border-left: 3px solid #7c3aed;
+  }
+
+  /* Purple button */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-accent hover:bg-accent-light
+           text-white font-semibold px-5 py-2.5 rounded-xl
+           transition-all duration-200 shadow-glow-sm hover:shadow-glow
+           active:scale-95 select-none;
+  }
+
+  /* Icon button */
+  .btn-icon {
+    @apply w-9 h-9 flex items-center justify-center rounded-xl
+           bg-white/10 hover:bg-white/20 text-white/70 hover:text-white
+           transition-all duration-200 cursor-pointer active:scale-95;
+  }
+
+  /* Genre badge */
+  .genre-badge {
+    @apply text-xs font-medium px-3 py-1 rounded-full border
+           border-white/20 text-white/80 bg-white/10 backdrop-blur-sm;
+  }
+}
+
+/* ── Utilities ────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+}
